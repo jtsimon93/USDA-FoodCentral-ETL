@@ -1,3 +1,4 @@
+#include "services/FoodCategoryExtractorService.h"
 #include "services/FoodExtractorService.h"
 #include <fstream>
 #include <iostream>
@@ -29,9 +30,15 @@ int main() {
   }
 
   FoodExtractorService food_extractor_service(input_map["food_input_file"]);
+  FoodCategoryExtractorService food_category_extractor_service(
+      input_map["food_category_input_file"]);
   const auto &food_entries = food_extractor_service.GetFoodEntries();
+  const auto &food_category_entries =
+      food_category_extractor_service.GetFoodCategoryEntries();
 
   std::cout << "Parsed " << food_entries.size() << " food entries:\n";
+  std::cout << "Parsed " << food_category_entries.size()
+            << " food category entries:\n";
 
   return 0;
 }
