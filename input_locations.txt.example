@@ -1,3 +1,4 @@
 food_input_file=/path/to/file
 food_category_input_file=/path/to/file
 nutrient_input_file=/path/to/file
+food_nutrient_input_file=/path/to/file
