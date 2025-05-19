@@ -1,6 +1,7 @@
 #include "services/FoodCategoryExtractorService.h"
 #include "services/FoodExtractorService.h"
 #include "services/FoodNutrientExtractorService.h"
+#include "services/FoodPortionExtractorService.h"
 #include "services/NutrientExtractorService.h"
 #include <fstream>
 #include <iostream>
@@ -38,12 +39,16 @@ int main() {
       input_map["nutrient_input_file"]);
   FoodNutrientExtractorService food_nutrient_extractor_service(
       input_map["food_nutrient_input_file"]);
+  FoodPortionExtractorService food_portion_extractor_service(
+      input_map["food_portion_input_file"]);
   const auto &food_entries = food_extractor_service.GetFoodEntries();
   const auto &food_category_entries =
       food_category_extractor_service.GetFoodCategoryEntries();
   const auto &nutrients = nutrient_extractor_service.GetNutrientEntries();
   const auto &food_nutrient_entries =
       food_nutrient_extractor_service.GetFoodNutrientEntries();
+  const auto &food_portion_entries =
+      food_portion_extractor_service.GetFoodPortionEntries();
 
   std::cout << "Parsed " << food_entries.size() << " food entries:\n";
   std::cout << "Parsed " << food_category_entries.size()
@@ -51,6 +56,8 @@ int main() {
   std::cout << "Parsed " << nutrients.size() << " nutrient entries.\n";
   std::cout << "Parsed " << food_nutrient_entries.size()
             << " food nutrient entries.\n";
+  std::cout << "Parsed " << food_portion_entries.size()
+            << " food portion entries.\n";
 
   return 0;
 }
