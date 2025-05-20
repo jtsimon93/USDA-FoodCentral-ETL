@@ -4,6 +4,7 @@
 #include <optional>
 #include <string>
 
+namespace USDA {
 typedef struct {
   int fdc_id; // foreign key to Food.fdc_id
 
@@ -33,3 +34,4 @@ typedef struct {
   std::optional<std::string> short_description;
   std::optional<std::string> material_code;
 } BrandedFood;
+} // namespace USDA
