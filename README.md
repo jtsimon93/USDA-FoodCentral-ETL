@@ -27,7 +27,7 @@ This project is **opinionated**:
   - `measure_unit.csv`
 - Excludes sample/subsample food records
 - Optional field handling via `std::optional`
-- Fast processing of **millions of records** in under 2 minutes
+- Fast processing of **tens millions of records** in under 1.5 minutes
 
 ---
 
