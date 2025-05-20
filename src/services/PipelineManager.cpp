@@ -53,17 +53,17 @@ void PipelineManager::Run() {
 
   // Block and wait for all tasks to finish
   // Ordered by least memory usage to most
-  const auto &category_entries = food_category_entries_future.get();
-  const auto &measure_unit_entries = measure_unit_entries_future.get();
-  const auto &nutrient_entries = nutrient_entries_future.get();
-  const auto &food_portion_entries = food_portion_entries_future.get();
-  const auto &food_entries = food_entries_future.get();
-  const auto &branded_food_entries = branded_food_entries_future.get();
-  const auto &food_nutrient_entries = food_nutrient_entries_future.get();
+  food_category_entries = std::move(food_category_entries_future.get());
+  measure_unit_entries = std::move(measure_unit_entries_future.get());
+  nutrient_entries = std::move(nutrient_entries_future.get());
+  food_portion_entries = std::move(food_portion_entries_future.get());
+  food_entries = std::move(food_entries_future.get());
+  branded_food_entries = std::move(branded_food_entries_future.get());
+  food_nutrient_entries = std::move(food_nutrient_entries_future.get());
 
   // Reporting
   std::cout << "Parsed " << food_entries.size() << " food entries:\n";
-  std::cout << "Parsed " << category_entries.size()
+  std::cout << "Parsed " << food_category_entries.size()
             << " food category entries:\n";
   std::cout << "Parsed " << nutrient_entries.size() << " nutrient entries.\n";
   std::cout << "Parsed " << food_nutrient_entries.size()
@@ -76,7 +76,7 @@ void PipelineManager::Run() {
             << " branded food entries.\n";
 
   auto total_entries =
-      food_entries.size() + category_entries.size() + nutrient_entries.size() +
+      food_entries.size() + food_category_entries.size() + nutrient_entries.size() +
       food_nutrient_entries.size() + food_portion_entries.size() +
       measure_unit_entries.size() + branded_food_entries.size();
   auto end_time = std::chrono::high_resolution_clock::now();
@@ -85,4 +85,5 @@ void PipelineManager::Run() {
 
   std::cout << "Time taken to parse all entries (" << total_entries
             << "): " << duration.count() << " milliseconds.\n";
+
 }
