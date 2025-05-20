@@ -4,7 +4,7 @@
 
 namespace USDA {
 typedef struct {
-  int id;
+  int id; // Primary key (internal to this table)
   std::string name;
 } MeasureUnit;
 } // namespace USDA

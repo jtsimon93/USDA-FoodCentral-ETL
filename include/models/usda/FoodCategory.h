@@ -4,7 +4,7 @@
 
 namespace USDA {
 typedef struct {
-  int id;
+  int id; // Primary key (internal to this table)
   int code;
   std::string description;
 } FoodCategory;
