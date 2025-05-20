@@ -2,6 +2,7 @@
 #include "services/BrandedFoodExtractorService.h"
 #include "services/FoodNutrientExtractorService.h"
 #include "services/NutrientExtractorService.h"
+#include <future>
 #include <iostream>
 
 PipelineManager::PipelineManager(
@@ -27,30 +28,57 @@ PipelineManager::PipelineManager(
 void PipelineManager::Run() {
   auto start_time = std::chrono::high_resolution_clock::now();
 
-  const auto &food_entries = food_extractor_service.GetFoodEntries();
-  const auto &category_entries =
-      food_category_extractor_service.GetFoodCategoryEntries();
-  const auto &nutrients = nutrient_extractor_service.GetNutrientEntries();
-  const auto &food_nutrients =
-      food_nutrient_extractor_service.GetFoodNutrientEntries();
-  const auto &portions = food_portion_extractor_service.GetFoodPortionEntries();
-  const auto &units = measure_unit_extractor_service.GetMeasureUnitEntries();
-  const auto &branded = branded_food_extractor_service.GetBrandedFoodEntries();
+  // Launch parsing tasks concurrently
+  auto food_entries_future = std::async(std::launch::async, [&]() {
+    return food_extractor_service.GetFoodEntries();
+  });
+  auto food_category_entries_future = std::async(std::launch::async, [&]() {
+    return food_category_extractor_service.GetFoodCategoryEntries();
+  });
+  auto nutrient_entries_future = std::async(std::launch::async, [&]() {
+    return nutrient_extractor_service.GetNutrientEntries();
+  });
+  auto food_nutrient_entries_future = std::async(std::launch::async, [&]() {
+    return food_nutrient_extractor_service.GetFoodNutrientEntries();
+  });
+  auto food_portion_entries_future = std::async(std::launch::async, [&]() {
+    return food_portion_extractor_service.GetFoodPortionEntries();
+  });
+  auto measure_unit_entries_future = std::async(std::launch::async, [&]() {
+    return measure_unit_extractor_service.GetMeasureUnitEntries();
+  });
+  auto branded_food_entries_future = std::async(std::launch::async, [&]() {
+    return branded_food_extractor_service.GetBrandedFoodEntries();
+  });
+
+  // Block and wait for all tasks to finish
+  // Ordered by least memory usage to most
+  const auto &category_entries = food_category_entries_future.get();
+  const auto &measure_unit_entries = measure_unit_entries_future.get();
+  const auto &nutrient_entries = nutrient_entries_future.get();
+  const auto &food_portion_entries = food_portion_entries_future.get();
+  const auto &food_entries = food_entries_future.get();
+  const auto &branded_food_entries = branded_food_entries_future.get();
+  const auto &food_nutrient_entries = food_nutrient_entries_future.get();
 
   // Reporting
   std::cout << "Parsed " << food_entries.size() << " food entries:\n";
   std::cout << "Parsed " << category_entries.size()
             << " food category entries:\n";
-  std::cout << "Parsed " << nutrients.size() << " nutrient entries.\n";
-  std::cout << "Parsed " << food_nutrients.size()
+  std::cout << "Parsed " << nutrient_entries.size() << " nutrient entries.\n";
+  std::cout << "Parsed " << food_nutrient_entries.size()
             << " food nutrient entries.\n";
-  std::cout << "Parsed " << portions.size() << " food portion entries.\n";
-  std::cout << "Parsed " << units.size() << " measure unit entries.\n";
-  std::cout << "Parsed " << branded.size() << " branded food entries.\n";
+  std::cout << "Parsed " << food_portion_entries.size()
+            << " food portion entries.\n";
+  std::cout << "Parsed " << measure_unit_entries.size()
+            << " measure unit entries.\n";
+  std::cout << "Parsed " << branded_food_entries.size()
+            << " branded food entries.\n";
 
-  auto total_entries = food_entries.size() + category_entries.size() +
-                       nutrients.size() + food_nutrients.size() +
-                       portions.size() + units.size() + branded.size();
+  auto total_entries =
+      food_entries.size() + category_entries.size() + nutrient_entries.size() +
+      food_nutrient_entries.size() + food_portion_entries.size() +
+      measure_unit_entries.size() + branded_food_entries.size();
   auto end_time = std::chrono::high_resolution_clock::now();
   auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(
       end_time - start_time);
