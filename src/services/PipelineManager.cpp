@@ -52,13 +52,14 @@ void PipelineManager::Run() {
   });
 
   // Block and wait for all tasks to finish
-  const auto &food_entries = food_entries_future.get();
+  // Ordered by least memory usage to most
   const auto &category_entries = food_category_entries_future.get();
-  const auto &nutrient_entries = nutrient_entries_future.get();
-  const auto &food_nutrient_entries = food_nutrient_entries_future.get();
-  const auto &food_portion_entries = food_portion_entries_future.get();
   const auto &measure_unit_entries = measure_unit_entries_future.get();
+  const auto &nutrient_entries = nutrient_entries_future.get();
+  const auto &food_portion_entries = food_portion_entries_future.get();
+  const auto &food_entries = food_entries_future.get();
   const auto &branded_food_entries = branded_food_entries_future.get();
+  const auto &food_nutrient_entries = food_nutrient_entries_future.get();
 
   // Reporting
   std::cout << "Parsed " << food_entries.size() << " food entries:\n";
