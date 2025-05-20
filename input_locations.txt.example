@@ -4,3 +4,4 @@ nutrient_input_file=/path/to/file
 food_nutrient_input_file=/path/to/file
 food_portion_input_file=/path/to/file
 measure_unit_input_file=/path/to/file
+branded_food_input_file=/path/to/file

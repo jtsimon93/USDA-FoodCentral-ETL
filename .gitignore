@@ -1,3 +1,4 @@
 .cache/
+.vscode/
 build/
 input_locations.txt

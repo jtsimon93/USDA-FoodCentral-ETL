@@ -1,3 +1,4 @@
+#include "services/BrandedFoodExtractorService.h"
 #include "services/FoodCategoryExtractorService.h"
 #include "services/FoodExtractorService.h"
 #include "services/FoodNutrientExtractorService.h"
@@ -44,6 +45,8 @@ int main() {
       input_map["food_portion_input_file"]);
   MeasureUnitExtractorService measure_unit_extractor_service(
       input_map["measure_unit_input_file"]);
+  BrandedFoodExtractorService branded_food_extractor_service(
+      input_map["branded_food_input_file"]);
 
   auto start_time = std::chrono::high_resolution_clock::now();
 
@@ -57,7 +60,8 @@ int main() {
       food_portion_extractor_service.GetFoodPortionEntries();
   const auto &measure_unit_entries =
       measure_unit_extractor_service.GetMeasureUnitEntries();
-
+  const auto &branded_food_entries =
+      branded_food_extractor_service.GetBrandedFoodEntries();
 
   std::cout << "Parsed " << food_entries.size() << " food entries:\n";
   std::cout << "Parsed " << food_category_entries.size()
@@ -69,6 +73,8 @@ int main() {
             << " food portion entries.\n";
   std::cout << "Parsed " << measure_unit_entries.size()
             << " measure unit entries.\n";
+  std::cout << "Parsed " << branded_food_entries.size()
+            << " branded food entries.\n";
 
   auto end_time = std::chrono::high_resolution_clock::now();
 
