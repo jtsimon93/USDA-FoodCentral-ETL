@@ -19,27 +19,34 @@ void FoodPortionExtractorService::ExtractFoodPortionEntries() {
     try {
       food_portion.id = row[0].get<int>();
       food_portion.fdc_id = row[1].get<int>();
-      food_portion.seq_num =
-          row[2].is_null() ? std::nullopt : row[2].get<std::optional<int>>();
-      food_portion.amount =
-          row[3].is_null() ? std::nullopt : row[3].get<std::optional<float>>();
+      food_portion.seq_num = row[2].is_null()
+                                 ? std::nullopt
+                                 : std::make_optional(row[2].get<int>());
+      food_portion.amount = row[3].is_null()
+                                ? std::nullopt
+                                : std::make_optional(row[3].get<float>());
       food_portion.measure_unit_id =
-          row[4].is_null() ? std::nullopt : row[4].get<std::optional<int>>();
+          row[4].is_null() ? std::nullopt
+                           : std::make_optional(row[4].get<int>());
 
       // Optional fields
-      food_portion.portion_description = row[5].get<std::string>();
-      food_portion.modifier = row[6].is_null()
-                                  ? std::nullopt
-                                  : row[6].get<std::optional<std::string>>();
-      food_portion.gram_weight =
-          row[7].is_null() ? std::nullopt : row[7].get<std::optional<float>>();
-      food_portion.data_points =
-          row[8].is_null() ? std::nullopt : row[8].get<std::optional<int>>();
-      food_portion.footnote = row[9].is_null()
-                                  ? std::nullopt
-                                  : row[9].get<std::optional<std::string>>();
+      food_portion.portion_description =
+          std::make_optional(row[5].get<std::string>());
+      food_portion.modifier =
+          row[6].is_null() ? std::nullopt
+                           : std::make_optional(row[6].get<std::string>());
+      food_portion.gram_weight = row[7].is_null()
+                                     ? std::nullopt
+                                     : std::make_optional(row[7].get<float>());
+      food_portion.data_points = row[8].is_null()
+                                     ? std::nullopt
+                                     : std::make_optional(row[8].get<int>());
+      food_portion.footnote =
+          row[9].is_null() ? std::nullopt
+                           : std::make_optional(row[9].get<std::string>());
       food_portion.min_year_acquired =
-          row[10].is_null() ? std::nullopt : row[10].get<std::optional<int>>();
+          row[10].is_null() ? std::nullopt
+                            : std::make_optional(row[10].get<int>());
 
       food_portion_entries.push_back(food_portion);
     } catch (const std::exception &e) {

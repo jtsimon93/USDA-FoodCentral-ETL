@@ -18,16 +18,20 @@ void FoodExtractorService::ExtractFoodEntries() {
     try {
       // We are only working with foundation and branded foods. Skip anything
       // else.
-        if (row[1].get<std::string>() != "foundation_food" &&
-            row[1].get<std::string>() != "branded_food") {
-            continue;
-        }
+      if (row[1].get<std::string>() != "foundation_food" &&
+          row[1].get<std::string>() != "branded_food") {
+        continue;
+      }
       food.fdc_id = row[0].get<int>();
-      food.data_type = row[1].get<std::string>() == "foundation_food" ? USDA::FoodDataType::Foundation : USDA::FoodDataType::Branded;
+      food.data_type = row[1].get<std::string>() == "foundation_food"
+                           ? USDA::FoodDataType::Foundation
+                           : USDA::FoodDataType::Branded;
       food.description = row[2].get<std::string>();
-      food.food_category_id = row[3].is_null() ? std::nullopt : row[3].get<std::optional<int>>();
+      food.food_category_id = row[3].is_null()
+                                  ? std::nullopt
+                                  : std::make_optional(row[3].get<std::string>());
 
-      std::string date = row[4].get<>();
+      std::string date = row[4].get<std::string>();
       if (date.size() >= 10) {
         food.publication_date = std::chrono::year_month_day(
             std::chrono::year(std::stoi(date.substr(0, 4))),

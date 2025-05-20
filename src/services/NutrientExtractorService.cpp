@@ -19,11 +19,12 @@ void NutrientExtractorService::ExtractNutrientEntries() {
       nutrient.id = row[0].get<int>();
       nutrient.name = row[1].get<std::string>();
       nutrient.unit_name = row[2].get<std::string>();
-      nutrient.nutrient_nbr = row[3].is_null()
-                                  ? std::nullopt
-                                  : row[3].get<std::optional<std::string>>();
-      nutrient.rank =
-          row[4].is_null() ? std::nullopt : row[4].get<std::optional<float>>();
+      nutrient.nutrient_nbr =
+          row[3].is_null() ? std::nullopt
+                           : std::make_optional(row[3].get<std::string>());
+      nutrient.rank = row[4].is_null()
+                          ? std::nullopt
+                          : std::make_optional(row[4].get<float>());
 
       nutrient_entries.push_back(nutrient);
     } catch (const std::exception &e) {
