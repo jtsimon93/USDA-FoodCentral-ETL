@@ -27,7 +27,7 @@ This project is **opinionated**:
   - `measure_unit.csv`
 - Excludes sample/subsample food records
 - Optional field handling via `std::optional`
-- Fast processing of **tens millions of records** in under 1.5 minutes
+- Extract process of over 30,000,000 rows from multiple input files in ~ 20 seconds (on an Intel i7-11800H) 🏃🏼‍♂️‍➡️
 
 ---
 

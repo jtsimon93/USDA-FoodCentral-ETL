@@ -1,7 +1,4 @@
 #include "services/PipelineManager.h"
-#include "services/BrandedFoodExtractorService.h"
-#include "services/FoodNutrientExtractorService.h"
-#include "services/NutrientExtractorService.h"
 #include <future>
 #include <iostream>
 
