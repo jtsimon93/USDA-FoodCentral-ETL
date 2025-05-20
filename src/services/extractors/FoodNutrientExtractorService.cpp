@@ -1,4 +1,4 @@
-#include "services/FoodNutrientExtractorService.h"
+#include "services/extractors/FoodNutrientExtractorService.h"
 #include "csv-parser.h"
 
 FoodNutrientExtractorService::FoodNutrientExtractorService(

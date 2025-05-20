@@ -1,13 +1,13 @@
 #pragma once
 
 #include "models/usda/BrandedFood.h"
-#include "services/BrandedFoodExtractorService.h"
-#include "services/FoodCategoryExtractorService.h"
-#include "services/FoodExtractorService.h"
-#include "services/FoodNutrientExtractorService.h"
-#include "services/FoodPortionExtractorService.h"
-#include "services/MeasureUnitExtractorService.h"
-#include "services/NutrientExtractorService.h"
+#include "services/extractors/BrandedFoodExtractorService.h"
+#include "services/extractors/FoodCategoryExtractorService.h"
+#include "services/extractors/FoodExtractorService.h"
+#include "services/extractors/FoodNutrientExtractorService.h"
+#include "services/extractors/FoodPortionExtractorService.h"
+#include "services/extractors/MeasureUnitExtractorService.h"
+#include "services/extractors/NutrientExtractorService.h"
 #include <string>
 #include <unordered_map>
 

@@ -1,4 +1,4 @@
-#include "services/FoodCategoryExtractorService.h"
+#include "services/extractors/FoodCategoryExtractorService.h"
 #include "csv-parser.h"
 
 FoodCategoryExtractorService::FoodCategoryExtractorService(

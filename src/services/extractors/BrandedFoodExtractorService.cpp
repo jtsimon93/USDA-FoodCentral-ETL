@@ -1,4 +1,4 @@
-#include "services/BrandedFoodExtractorService.h"
+#include "services/extractors/BrandedFoodExtractorService.h"
 #include "csv-parser.h"
 #include "models/usda/BrandedFood.h"
 #include <optional>
