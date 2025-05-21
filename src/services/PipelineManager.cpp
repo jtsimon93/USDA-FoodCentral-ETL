@@ -147,12 +147,20 @@ void PipelineManager::LoadData() {
     return;
   }
 
-  auto loaded = dbLoader.LoadBrandedFood(branded_food_entries);
+  bool loaded = true;
+
+  bool load_foods = dbLoader.LoadFoods(food_entries);
+  bool load_branded_food = dbLoader.LoadBrandedFood(branded_food_entries);
+
+  if (!load_foods || !load_branded_food) {
+    loaded = false;
+  }
 
   if (!loaded) {
-    std::cerr << "Failed to load branded food data into SQLite database."
-              << std::endl;
+    std::cerr
+        << "One or more errors occurred while loading data into the database."
+        << std::endl;
   } else {
-    std::cout << "Branded food data loaded successfully." << std::endl;
+    std::cout << "Data loaded successfully." << std::endl;
   }
 }
