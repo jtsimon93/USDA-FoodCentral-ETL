@@ -25,6 +25,7 @@ PipelineManager::PipelineManager(
 }
 
 void PipelineManager::ProcessData() {
+  // Execute pipeline phases in sequence
   ExtractData();
   TransformData();
 }
@@ -33,7 +34,8 @@ void PipelineManager::ExtractData() {
   const auto start_time = std::chrono::high_resolution_clock::now();
   std::cout << "Starting data extract... \n";
 
-  // Launch parsing tasks concurrently
+  // Launch parsing tasks concurrently using std::async
+  // Each task runs in a separate thread for maximum parallelism
   auto food_entries_future = std::async(std::launch::async, [&]() {
     return food_extractor_service.GetFoodEntries();
   });
@@ -57,8 +59,8 @@ void PipelineManager::ExtractData() {
   });
 
   // Block and wait for all tasks to finish
-  // Ordered by least memory usage to most
-  // Use std::move to avoid unnecessary copies
+  // Ordered by least memory usage to most to optimize memory consumption pattern
+  // Using std::move to transfer ownership without copying large vectors (crucial for 3GB+ dataset)
   food_category_entries = std::move(food_category_entries_future.get());
   measure_unit_entries = std::move(measure_unit_entries_future.get());
   nutrient_entries = std::move(nutrient_entries_future.get());
@@ -81,6 +83,7 @@ void PipelineManager::ExtractData() {
   std::cout << "Parsed " << branded_food_entries.size()
             << " branded food entries.\n\n";
 
+  // Calculate total entries and timing statistics
   auto total_entries = food_entries.size() + food_category_entries.size() +
                        nutrient_entries.size() + food_nutrient_entries.size() +
                        food_portion_entries.size() +
@@ -95,9 +98,12 @@ void PipelineManager::ExtractData() {
 }
 
 void PipelineManager::TransformData() {
-
-  // Clean out food nutrients and food portions that don't correspond to valid
-  // FDC IDs
+  // Begin data cleaning and transformation processes
+  
+  // First transformation: Remove entries with invalid FDC ID references
+  // This ensures referential integrity between collections
   ValidFDCIDTransformer::TransformData(food_entries, food_nutrient_entries,
                                        food_portion_entries);
+  
+  // Additional transformers would be added here in sequence
 }
