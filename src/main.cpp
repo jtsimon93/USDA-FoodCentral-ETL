@@ -30,7 +30,7 @@ int main() {
   }
 
   PipelineManager manager(input_map);
-  manager.Run();
+  manager.ProcessData();
 
   return 0;
 }
