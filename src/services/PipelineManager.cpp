@@ -1,4 +1,5 @@
 #include "services/PipelineManager.h"
+#include "services/loaders/SQLiteLoaderService.h"
 #include "services/transformers/ValidFDCIDTransformer.h"
 #include <chrono>
 #include <future>
@@ -35,6 +36,9 @@ void PipelineManager::ProcessData() {
   const auto transformation_end_time =
       std::chrono::high_resolution_clock::now();
 
+  LoadData();
+  const auto load_end_time = std::chrono::high_resolution_clock::now();
+
   // Calculate and report timing statistics
   const auto extraction_duration =
       std::chrono::duration_cast<std::chrono::seconds>(extraction_end_time -
@@ -46,8 +50,15 @@ void PipelineManager::ProcessData() {
                                                        extraction_end_time);
   std::cout << "Data transformation completed in "
             << transformation_duration.count() << " seconds.\n";
+
+  const auto load_duration = std::chrono::duration_cast<std::chrono::seconds>(
+      load_end_time - transformation_end_time);
+
+  std::cout << "Data loading completed in " << load_duration.count()
+            << " seconds.\n";
+
   const auto total_duration = std::chrono::duration_cast<std::chrono::seconds>(
-      transformation_end_time - start_time);
+      load_end_time - start_time);
   std::cout << "Total pipeline execution time: " << total_duration.count()
             << " seconds.\n";
 }
@@ -124,4 +135,24 @@ void PipelineManager::TransformData() {
                                        food_portion_entries);
 
   // Additional transformers would be added here in sequence
+}
+
+void PipelineManager::LoadData() {
+  SQLiteLoaderService dbLoader("usda-food-central.db");
+
+  auto initalized = dbLoader.Initialize();
+
+  if (!initalized) {
+    std::cerr << "Failed to initialize SQLite database." << std::endl;
+    return;
+  }
+
+  auto loaded = dbLoader.LoadBrandedFood(branded_food_entries);
+
+  if (!loaded) {
+    std::cerr << "Failed to load branded food data into SQLite database."
+              << std::endl;
+  } else {
+    std::cout << "Branded food data loaded successfully." << std::endl;
+  }
 }

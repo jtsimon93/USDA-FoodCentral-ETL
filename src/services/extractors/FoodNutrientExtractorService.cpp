@@ -1,5 +1,5 @@
 #include "services/extractors/FoodNutrientExtractorService.h"
-#include "csv-parser.h"
+#include "csv-parser/csv-parser.h"
 
 FoodNutrientExtractorService::FoodNutrientExtractorService(
     const std::string &food_nutrient_input_file)

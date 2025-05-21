@@ -1,5 +1,5 @@
 #include "services/extractors/BrandedFoodExtractorService.h"
-#include "csv-parser.h"
+#include "csv-parser/csv-parser.h"
 #include "models/usda/BrandedFood.h"
 #include <optional>
 

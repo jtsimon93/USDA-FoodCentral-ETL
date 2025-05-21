@@ -68,6 +68,12 @@ private:
    * - Removing entries with invalid FDC ID references
    */
   void TransformData();
+
+  /**
+   * @brief Loads the data into the database.
+   */
+  void LoadData();
+
   std::unordered_map<std::string, std::string> input_map;
   FoodExtractorService food_extractor_service;
   FoodCategoryExtractorService food_category_extractor_service;
