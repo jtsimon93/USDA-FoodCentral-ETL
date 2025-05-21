@@ -150,7 +150,14 @@ void PipelineManager::LoadData() {
   bool loaded = true;
 
   bool load_foods = dbLoader.LoadFoods(food_entries);
+
+  food_entries.clear(); // Clear memory after loading
+
   bool load_branded_food = dbLoader.LoadBrandedFood(branded_food_entries);
+  branded_food_entries.clear(); // Clear memory after loading
+
+  bool load_food_category = dbLoader.LoadFoodCategory(food_category_entries);
+  food_category_entries.clear(); // Clear memory after loading
 
   if (!load_foods || !load_branded_food) {
     loaded = false;

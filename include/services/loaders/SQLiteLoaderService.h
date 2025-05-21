@@ -14,6 +14,7 @@
 
 #include "models/usda/BrandedFood.h"
 #include "models/usda/Food.h"
+#include "models/usda/FoodCategory.h"
 #include "sqlite/sqlite3.h"
 #include <string>
 #include <vector>
@@ -65,6 +66,18 @@ public:
    * @return true if loading succeeded, false if errors occurred
    */
   bool LoadBrandedFood(const std::vector<USDA::BrandedFood> &branded_foods);
+
+  /**
+   * @brief Loads the food categories into the database
+   *
+   * Handles the insertion of food categories into the SQLite database,
+   * managing the transaction and handling potential errors during insertion.
+   *
+   * @param food_categories Vector of FoodCategory objects to insert into the
+   * database
+   * @return true if loading succeeded, false if errors occurred
+   */
+  bool LoadFoodCategory(const std::vector<USDA::FoodCategory> &food_categories);
 
 private:
   /**

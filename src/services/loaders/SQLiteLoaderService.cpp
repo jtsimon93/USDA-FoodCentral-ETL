@@ -94,6 +94,26 @@ bool SQLiteLoaderService::createTables() {
     }
   }
 
+  if (!tableExists("food_catgories")) {
+    const char *sql = R"SQL(
+            CREATE TABLE food_categories (
+                id INTEGER PRIMARY KEY,
+                code INTEGER,
+                description TEXT
+            )
+        )SQL";
+
+    char *errMsg = nullptr;
+    int rc = sqlite3_exec(db, sql, nullptr, nullptr, &errMsg);
+
+    if (rc != SQLITE_OK) {
+      std::cerr << "Error creating food_categories table: " << errMsg
+                << std::endl;
+      sqlite3_free(errMsg);
+      return false;
+    }
+  }
+
   return true;
 }
 
@@ -500,6 +520,72 @@ bool SQLiteLoaderService::LoadBrandedFood(
   } else {
     rollbackTransaction();
     std::cout << "Failed to load branded foods. Rolling back transaction."
+              << std::endl;
+  }
+
+  return success;
+}
+
+bool SQLiteLoaderService::LoadFoodCategory(
+    const std::vector<USDA::FoodCategory> &food_categories) {
+  if (!db || food_categories.empty()) {
+    return false;
+  }
+
+  // Define the columns for the insert statement
+  std::vector<std::string> columns = {"id", "code", "description"};
+
+  // Prepare the insert statement
+  sqlite3_stmt *stmt = prepareInsertStatement("food_categories", columns);
+
+  if (!stmt) {
+    return false;
+  }
+
+  beginTransaction();
+
+  bool success = true;
+  int count = 0;
+  const int BATCH_SIZE = 10000;
+
+  for (const auto &food_category : food_categories) {
+    int idx = 1;
+    sqlite3_bind_int(stmt, idx++, food_category.id);
+    sqlite3_bind_int(stmt, idx++, food_category.code);
+    sqlite3_bind_text(stmt, idx++, food_category.description.c_str(), -1,
+                      SQLITE_STATIC);
+
+    // Execute the statement
+    int rc = sqlite3_step(stmt);
+    if (rc != SQLITE_DONE) {
+      logError("Inserting food category record");
+      success = false;
+      break;
+    }
+
+    // Reset the statement for the next record
+    sqlite3_reset(stmt);
+
+    // Commit in batches to avoid excessive memory usage
+    count++;
+    if (count % BATCH_SIZE == 0) {
+      commitTransaction();
+      beginTransaction();
+      std::cout << "Inserted " << count << " of " << food_categories.size()
+                << " food category records..." << std::endl;
+    }
+  }
+
+  // Finalize the statement
+  finalizeStatement(stmt);
+
+  if (success) {
+    commitTransaction();
+    std::cout << "Successfully loaded " << count << " food category records"
+              << std::endl;
+  } else {
+    rollbackTransaction();
+    std::cout << "Failed to load food categories. Rolling back transaction."
               << std::endl;
   }
 
