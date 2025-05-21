@@ -2,19 +2,6 @@
 #include <iostream>
 #include <unordered_set>
 
-/**
- * Filters food nutrient and food portion entries to ensure they all reference 
- * valid Food Data Central IDs (FDC IDs) from the master food entries list.
- * 
- * During the extraction process, only foundation and branded foods are retained
- * in the food entries, while sample foods and sub-sample foods are skipped. 
- * This transformation removes any orphaned records in related tables that 
- * reference skipped FDC IDs.
- * 
- * @param food_entries Master list of food entries with valid FDC IDs
- * @param food_nutrient_entries Food nutrient entries to be filtered
- * @param food_portion_entries Food portion entries to be filtered
- */
 void ValidFDCIDTransformer::TransformData(
     std::vector<USDA::Food> &food_entries,
     std::vector<USDA::FoodNutrient> &food_nutrient_entries,
@@ -23,14 +10,14 @@ void ValidFDCIDTransformer::TransformData(
   const auto start_time = std::chrono::high_resolution_clock::now();
   int total_transformed_entries = 0;
 
-  // Create a hash set of all valid food IDs for efficient lookup
+  // Use a hash set for O(1) lookup efficiency when filtering entries
   std::unordered_set<int> valid_fdc_ids;
   valid_fdc_ids.reserve(food_entries.size());
   for (const auto &food : food_entries) {
     valid_fdc_ids.insert(food.fdc_id);
   }
 
-  // Filter food nutrient entries, removing those without a corresponding valid FDC ID
+  // Filter food nutrient entries using the erase-remove idiom for optimal performance
   const auto initial_food_nutrient_size = food_nutrient_entries.size();
   food_nutrient_entries.erase(
       std::remove_if(food_nutrient_entries.begin(), food_nutrient_entries.end(),
@@ -44,7 +31,7 @@ void ValidFDCIDTransformer::TransformData(
       initial_food_nutrient_size - final_food_nutrient_size;
   total_transformed_entries += removed_food_nutrient_count;
 
-  // Filter food portion entries, removing those without a corresponding valid FDC ID
+  // Apply the same filtering algorithm to food portion entries
   const auto initial_food_portion_size = food_portion_entries.size();
   food_portion_entries.erase(
       std::remove_if(food_portion_entries.begin(), food_portion_entries.end(),
@@ -62,8 +49,10 @@ void ValidFDCIDTransformer::TransformData(
   const auto end_time = std::chrono::high_resolution_clock::now();
   const auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(
       end_time - start_time);
+  std::cout << "Removed " << removed_food_nutrient_count << " food nutrient entries with invalid FDC IDs\n";
+  std::cout << "Removed " << removed_food_portion_count << " food portion entries with invalid FDC IDs\n";
   std::cout << "Time taken to transform all entries: " << duration.count()
             << " milliseconds.\n";
   std::cout << "Total removed entries: " << total_transformed_entries
-            << "\n";
+            << "\n\n";
 }
