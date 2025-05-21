@@ -21,8 +21,9 @@ if(NOT EXISTS "${INPUT_LOCATIONS_FILE}")
 endif()
 
 file(GLOB_RECURSE SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
+set(SQLITE3_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/external/sqlite/sqlite3.c")
 
-add_executable(${PROJECT_NAME} ${SOURCES})
+add_executable(${PROJECT_NAME} ${SOURCES} ${SQLITE3_SOURCES})
 
 target_include_directories(${PROJECT_NAME} PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include
