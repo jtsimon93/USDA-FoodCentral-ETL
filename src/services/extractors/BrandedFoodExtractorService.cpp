@@ -14,6 +14,10 @@ BrandedFoodExtractorService::GetBrandedFoodEntries() {
 }
 
 void BrandedFoodExtractorService::ExtractBrandedFoodEntries() {
+  // Branded foods are a large dataset, typically ~2 million entries
+  branded_food_entries.reserve(2000000);
+
+  // Open and parse the CSV file
   csv::CSVReader reader(branded_food_input_file);
 
   for (csv::CSVRow &row : reader) {
@@ -58,20 +62,24 @@ void BrandedFoodExtractorService::ExtractBrandedFoodEntries() {
           row[12].is_null() ? std::nullopt
                             : std::make_optional(row[12].get<std::string>());
 
+      // Helper lambda to parse ISO-format dates (YYYY-MM-DD) safely
       auto parse_date = [](const std::string &s)
           -> std::optional<std::chrono::year_month_day> {
         if (s.size() >= 10) {
           try {
+            // Extract year, month, day components from ISO date string
             int y = std::stoi(s.substr(0, 4));
             int m = std::stoi(s.substr(5, 2));
             int d = std::stoi(s.substr(8, 2));
 
+            // Create chrono year_month_day object with proper type conversions
             return std::chrono::year_month_day{
                 std::chrono::year{y},
                 std::chrono::month{static_cast<unsigned int>(m)},
                 std::chrono::day{static_cast<unsigned int>(d)}};
 
           } catch (...) {
+            // Return nullopt for any parsing errors
             return std::nullopt;
           }
         }
@@ -108,4 +116,7 @@ void BrandedFoodExtractorService::ExtractBrandedFoodEntries() {
       std::cerr << "Failed to parse branded food row: " << e.what() << "\n";
     }
   }
+
+  // Optimize memory usage after loading is complete
+  branded_food_entries.shrink_to_fit();
 }

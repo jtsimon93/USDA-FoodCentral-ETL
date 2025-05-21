@@ -12,6 +12,8 @@ MeasureUnitExtractorService::GetMeasureUnitEntries() {
 }
 
 void MeasureUnitExtractorService::ExtractMeasureUnitEntries() {
+  measure_unit_entries.reserve(150); // Pre-allocate for expected size
+
   csv::CSVReader reader(measure_unit_input_file);
 
   for (csv::CSVRow &row : reader) {
@@ -25,4 +27,7 @@ void MeasureUnitExtractorService::ExtractMeasureUnitEntries() {
       std::cerr << "Failed to parse measure unit row: " << e.what() << "\n";
     }
   }
+
+  // Optimize memory usage after loading is complete
+  measure_unit_entries.shrink_to_fit();
 }

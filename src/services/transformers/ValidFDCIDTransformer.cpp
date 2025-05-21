@@ -50,9 +50,7 @@ void ValidFDCIDTransformer::TransformData(
   const auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(
       end_time - start_time);
   std::cout << "Removed " << removed_food_nutrient_count << " food nutrient entries with invalid FDC IDs\n";
-  std::cout << "Removed " << removed_food_portion_count << " food portion entries with invalid FDC IDs\n";
+  std::cout << "Removed " << removed_food_portion_count << " food portion entries with invalid FDC IDs\n\n";
   std::cout << "Time taken to transform all entries: " << duration.count()
             << " milliseconds.\n";
-  std::cout << "Total removed entries: " << total_transformed_entries
-            << "\n\n";
 }
