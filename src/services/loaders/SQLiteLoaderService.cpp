@@ -33,6 +33,27 @@ bool SQLiteLoaderService::Initialize() {
 bool SQLiteLoaderService::createTables() {
     if (!db) return false;
 
+    // Create foods table if it doesn't exit
+    if(!tableExists("foods")) {
+        const char *sql = R"SQL(
+            CREATE TABLE foods (
+                fdc_id INTEGER PRIMARY KEY,
+                data_type TEXT,
+                description TEXT,
+                food_category_id TEXT,
+                publication_date TEXT
+            ))SQL";
+
+        char *errMsg = nullptr;
+        int rc = sqlite3_exec(db, sql, nullptr, nullptr, &errMsg);
+
+        if(rc != SQLITE_OK) {
+            std::cerr << "Error creating foods table: " << errMsg << std::endl;
+            sqlite3_free(errMsg);
+            return false;
+        }
+    }
+
     // Create branded_foods table if it doesn't exist
     if (!tableExists("branded_foods")) {
         const char *sql = R"SQL(
