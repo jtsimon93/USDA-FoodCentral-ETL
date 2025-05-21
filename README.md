@@ -2,6 +2,8 @@
 
 This project provides a high-performance pipeline for parsing and transforming data from the **USDA FoodData Central** CSV exports. It is intended to simplify and accelerate ETL (Extract, Transform, Load) workflows, particularly for use in real-world applications like fitness tracking or dietary analysis.
 
+USDA FoodCentral Database download: https://fdc.nal.usda.gov/download-datasets
+
 ---
 
 ## 🎯 Project Goals
