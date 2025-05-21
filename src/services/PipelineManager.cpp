@@ -1,4 +1,6 @@
 #include "services/PipelineManager.h"
+#include "services/transformers/ValidFDCIDTransformer.h"
+#include <chrono>
 #include <future>
 #include <iostream>
 
@@ -22,8 +24,14 @@ PipelineManager::PipelineManager(
   throw; // Rethrow to stop execution
 }
 
-void PipelineManager::Run() {
-  auto start_time = std::chrono::high_resolution_clock::now();
+void PipelineManager::ProcessData() {
+  ExtractData();
+  TransformData();
+}
+
+void PipelineManager::ExtractData() {
+  const auto start_time = std::chrono::high_resolution_clock::now();
+  std::cout << "Starting data extract... \n";
 
   // Launch parsing tasks concurrently
   auto food_entries_future = std::async(std::launch::async, [&]() {
@@ -50,6 +58,7 @@ void PipelineManager::Run() {
 
   // Block and wait for all tasks to finish
   // Ordered by least memory usage to most
+  // Use std::move to avoid unnecessary copies
   food_category_entries = std::move(food_category_entries_future.get());
   measure_unit_entries = std::move(measure_unit_entries_future.get());
   nutrient_entries = std::move(nutrient_entries_future.get());
@@ -70,17 +79,25 @@ void PipelineManager::Run() {
   std::cout << "Parsed " << measure_unit_entries.size()
             << " measure unit entries.\n";
   std::cout << "Parsed " << branded_food_entries.size()
-            << " branded food entries.\n";
+            << " branded food entries.\n\n";
 
-  auto total_entries =
-      food_entries.size() + food_category_entries.size() + nutrient_entries.size() +
-      food_nutrient_entries.size() + food_portion_entries.size() +
-      measure_unit_entries.size() + branded_food_entries.size();
-  auto end_time = std::chrono::high_resolution_clock::now();
-  auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(
+  auto total_entries = food_entries.size() + food_category_entries.size() +
+                       nutrient_entries.size() + food_nutrient_entries.size() +
+                       food_portion_entries.size() +
+                       measure_unit_entries.size() +
+                       branded_food_entries.size();
+  const auto end_time = std::chrono::high_resolution_clock::now();
+  const auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(
       end_time - start_time);
 
-  std::cout << "Time taken to parse all entries (" << total_entries
-            << "): " << duration.count() << " milliseconds.\n";
+  std::cout << "Time taken to extract all entries (" << total_entries
+            << "): " << duration.count() << " milliseconds.\n\n\n";
+}
 
+void PipelineManager::TransformData() {
+
+  // Clean out food nutrients and food portions that don't correspond to valid
+  // FDC IDs
+  ValidFDCIDTransformer::TransformData(food_entries, food_nutrient_entries,
+                                       food_portion_entries);
 }

@@ -15,9 +15,11 @@ class PipelineManager {
 public:
   PipelineManager(
       const std::unordered_map<std::string, std::string> &input_map);
-  void Run();
+  void ProcessData();
 
 private:
+  void ExtractData();
+  void TransformData();
   std::unordered_map<std::string, std::string> input_map;
   FoodExtractorService food_extractor_service;
   FoodCategoryExtractorService food_category_extractor_service;
