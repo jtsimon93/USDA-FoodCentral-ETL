@@ -12,6 +12,8 @@ FoodCategoryExtractorService::GetFoodCategoryEntries() {
 }
 
 void FoodCategoryExtractorService::ExtractFoodCategoryEntries() {
+  food_category_entries.reserve(50); // Pre-allocate for expected size
+
   csv::CSVReader reader(food_category_input_file);
 
   for (csv::CSVRow &row : reader) {
@@ -26,4 +28,7 @@ void FoodCategoryExtractorService::ExtractFoodCategoryEntries() {
       std::cerr << "Failed to parse food category row: " << e.what() << "\n";
     }
   }
+
+  // Optimize memory usage after loading is complete
+  food_category_entries.shrink_to_fit();
 }

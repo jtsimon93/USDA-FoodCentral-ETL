@@ -12,6 +12,10 @@ FoodPortionExtractorService::GetFoodPortionEntries() {
 }
 
 void FoodPortionExtractorService::ExtractFoodPortionEntries() {
+  // Food portions are a moderate-sized dataset, typically ~50,000 entries
+  food_portion_entries.reserve(50000);
+
+  // Open and parse the CSV file using csv-parser library
   csv::CSVReader reader(food_portion_input_file);
 
   for (csv::CSVRow &row : reader) {
@@ -53,4 +57,7 @@ void FoodPortionExtractorService::ExtractFoodPortionEntries() {
       std::cerr << "Failed to parse food portion row: " << e.what() << "\n";
     }
   }
+
+  // Optimize memory usage after loading is complete
+  food_portion_entries.shrink_to_fit();
 }

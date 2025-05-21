@@ -11,6 +11,8 @@ std::vector<USDA::Nutrient> &NutrientExtractorService::GetNutrientEntries() {
 }
 
 void NutrientExtractorService::ExtractNutrientEntries() {
+  nutrient_entries.reserve(500); // Pre-allocate for expected size
+
   csv::CSVReader reader(nutrient_input_file);
 
   for (csv::CSVRow &row : reader) {
@@ -31,4 +33,7 @@ void NutrientExtractorService::ExtractNutrientEntries() {
       std::cerr << "Failed to parse nutrient row: " << e.what() << "\n";
     }
   }
+
+  // Optimize memory usage after loading is complete
+  nutrient_entries.shrink_to_fit();
 }
