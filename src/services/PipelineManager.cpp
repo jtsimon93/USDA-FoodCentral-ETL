@@ -25,13 +25,34 @@ PipelineManager::PipelineManager(
 }
 
 void PipelineManager::ProcessData() {
+  const auto start_time = std::chrono::high_resolution_clock::now();
+
   // Execute pipeline phases in sequence
   ExtractData();
+  const auto extraction_end_time = std::chrono::high_resolution_clock::now();
+
   TransformData();
+  const auto transformation_end_time =
+      std::chrono::high_resolution_clock::now();
+
+  // Calculate and report timing statistics
+  const auto extraction_duration =
+      std::chrono::duration_cast<std::chrono::seconds>(extraction_end_time -
+                                                       start_time);
+  std::cout << "\nData extraction completed in " << extraction_duration.count()
+            << " seconds.\n";
+  const auto transformation_duration =
+      std::chrono::duration_cast<std::chrono::seconds>(transformation_end_time -
+                                                       extraction_end_time);
+  std::cout << "Data transformation completed in "
+            << transformation_duration.count() << " seconds.\n";
+  const auto total_duration = std::chrono::duration_cast<std::chrono::seconds>(
+      transformation_end_time - start_time);
+  std::cout << "Total pipeline execution time: " << total_duration.count()
+            << " seconds.\n";
 }
 
 void PipelineManager::ExtractData() {
-  const auto start_time = std::chrono::high_resolution_clock::now();
   std::cout << "Starting data extract... \n";
 
   // Launch parsing tasks concurrently using std::async
@@ -59,8 +80,9 @@ void PipelineManager::ExtractData() {
   });
 
   // Block and wait for all tasks to finish
-  // Ordered by least memory usage to most to optimize memory consumption pattern
-  // Using std::move to transfer ownership without copying large vectors (crucial for 3GB+ dataset)
+  // Ordered by least memory usage to most to optimize memory consumption
+  // pattern Using std::move to transfer ownership without copying large vectors
+  // (crucial for 3GB+ dataset)
   food_category_entries = std::move(food_category_entries_future.get());
   measure_unit_entries = std::move(measure_unit_entries_future.get());
   nutrient_entries = std::move(nutrient_entries_future.get());
@@ -89,21 +111,17 @@ void PipelineManager::ExtractData() {
                        food_portion_entries.size() +
                        measure_unit_entries.size() +
                        branded_food_entries.size();
-  const auto end_time = std::chrono::high_resolution_clock::now();
-  const auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(
-      end_time - start_time);
 
-  std::cout << "Time taken to extract all entries (" << total_entries
-            << "): " << duration.count() << " milliseconds.\n\n\n";
+  std::cout << "Total entries parsed: " << total_entries << "\n\n";
 }
 
 void PipelineManager::TransformData() {
   // Begin data cleaning and transformation processes
-  
+
   // First transformation: Remove entries with invalid FDC ID references
   // This ensures referential integrity between collections
   ValidFDCIDTransformer::TransformData(food_entries, food_nutrient_entries,
                                        food_portion_entries);
-  
+
   // Additional transformers would be added here in sequence
 }
