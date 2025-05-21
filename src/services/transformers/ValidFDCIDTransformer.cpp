@@ -47,4 +47,8 @@ void ValidFDCIDTransformer::TransformData(
             << " food nutrient entries with invalid FDC IDs\n";
   std::cout << "Removed " << removed_food_portion_count
             << " food portion entries with invalid FDC IDs\n\n";
+
+  // Optimize memory usage
+  food_nutrient_entries.shrink_to_fit();
+  food_portion_entries.shrink_to_fit();
 }
